@@ -6,8 +6,10 @@ function loop() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
   player.update();
+  updateCircles(player);
 
   level.draw(ctx);
+  drawCircles(ctx);
   player.draw(ctx);
 
   requestAnimationFrame(loop);
