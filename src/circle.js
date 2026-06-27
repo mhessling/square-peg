@@ -30,9 +30,64 @@ function updateCircles(player) {
 
     // Stay on the ground, same as the player.
     circle.y = level.groundY - circle.radius;
+  }
 
+  resolveCircleCollisions();
+
+  for (const circle of circles) {
     // Keep circles from rolling off the edges of the canvas.
     circle.x = Math.max(circle.radius, Math.min(800 - circle.radius, circle.x));
+  }
+}
+
+// Circles shouldn't overlap each other — push overlapping pairs apart.
+function resolveCircleCollisions() {
+  for (let i = 0; i < circles.length; i++) {
+    for (let j = i + 1; j < circles.length; j++) {
+      const a = circles[i];
+      const b = circles[j];
+      const dx = b.x - a.x;
+      const overlap = a.radius + b.radius - Math.abs(dx);
+
+      if (overlap > 0) {
+        const direction = dx >= 0 ? 1 : -1;
+        const push = overlap / 2;
+        a.x -= direction * push;
+        b.x += direction * push;
+      }
+    }
+  }
+}
+
+// The square shouldn't be able to walk through a circle — push it back out on overlap.
+function resolvePlayerCollisions(player) {
+  for (const circle of circles) {
+    const px0 = player.x, px1 = player.x + player.size;
+    const py0 = player.y, py1 = player.y + player.size;
+    const cx0 = circle.x - circle.radius, cx1 = circle.x + circle.radius;
+    const cy0 = circle.y - circle.radius, cy1 = circle.y + circle.radius;
+
+    const overlapX = Math.min(px1, cx1) - Math.max(px0, cx0);
+    const overlapY = Math.min(py1, cy1) - Math.max(py0, cy0);
+
+    if (overlapX <= 0 || overlapY <= 0) continue;
+
+    if (overlapX < overlapY) {
+      // Push out sideways.
+      if (player.x + player.size / 2 < circle.x) player.x -= overlapX;
+      else player.x += overlapX;
+      player.vx = 0;
+    } else {
+      // Push out vertically.
+      if (player.y + player.size / 2 < circle.y) {
+        player.y -= overlapY;
+        player.vy = 0;
+        player.onGround = true;
+      } else {
+        player.y += overlapY;
+        player.vy = 0;
+      }
+    }
   }
 }
 

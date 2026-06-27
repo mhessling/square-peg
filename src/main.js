@@ -7,6 +7,7 @@ function loop() {
 
   player.update();
   updateCircles(player);
+  resolvePlayerCollisions(player);
 
   level.draw(ctx);
   drawCircles(ctx);
