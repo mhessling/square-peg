@@ -1,4 +1,4 @@
-# Squared
+# Square Peg
 
 A small platformer about a square navigating a world built for everyone else.
 
