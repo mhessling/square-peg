@@ -1,10 +1,14 @@
 // Circles. They don't like squares — when the player gets close, they flinch, then roll away.
 const FLINCH_DURATION = 20; // frames spent startled before a circle actually flees
 
-const circles = [
-  { x: 300, y: 200, radius: 20, speed: 3, fleeRange: 150, state: 'idle', flinchTimer: 0 },
-  { x: 550, y: 300, radius: 20, speed: 3, fleeRange: 150, state: 'idle', flinchTimer: 0 }
-];
+let circles = [];
+
+// Replace the active circles with a fresh set, e.g. when entering a new room.
+function resetCircles(defs) {
+  circles = defs.map(def => ({ ...def, state: 'idle', flinchTimer: 0 }));
+}
+
+resetCircles(level.current.circleDefs);
 
 function updateCircles(player) {
   for (const circle of circles) {

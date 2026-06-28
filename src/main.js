@@ -9,6 +9,8 @@ function loop() {
   updateCircles(player);
   resolvePlayerCollisions(player);
 
+  if (level.isAtDoor(player)) level.advance();
+
   level.draw(ctx);
   drawCircles(ctx);
   player.draw(ctx);
