@@ -8,6 +8,7 @@
 - Square collides solidly with circles (no pass-through) — this is the basis for "pushing" them around in puzzles, though actual pushing (circle gets shoved, not just blocked) isn't implemented yet.
 
 ## Next up
+- In progress: a "win condition" — a door in the room that lets the player progress to the next room/map. Plan being aligned with the user before implementing.
 - Implement actual "pushing": right now the player is blocked by circles but doesn't move them — pushing puzzles need the circle to get shoved when the player walks into it.
 - Decide what a "solved" puzzle looks like (e.g. get a circle to a target spot) — needed before maps mean anything as puzzles.
 - Define more than one map/level, and a way to switch between them.
