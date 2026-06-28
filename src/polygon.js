@@ -65,3 +65,55 @@ function polygonMTV(movingVerts, staticVerts) {
 
   return { x: minAxis.x * minOverlap, y: minAxis.y * minOverlap };
 }
+
+// Minimum translation vector to push a circle out of a convex polygon, or
+// null if they don't overlap. Circles have no edges of their own, so this
+// only tests the polygon's edge normals plus the axis to the nearest vertex
+// (needed so corners push the circle correctly too).
+function circlePolygonMTV(circle, verts) {
+  let minOverlap = Infinity;
+  let minAxis = null;
+
+  const axes = [];
+  for (let i = 0; i < verts.length; i++) {
+    const p1 = verts[i];
+    const p2 = verts[(i + 1) % verts.length];
+    const edge = { x: p2.x - p1.x, y: p2.y - p1.y };
+    const len = Math.hypot(edge.x, edge.y);
+    if (len === 0) continue;
+    axes.push({ x: -edge.y / len, y: edge.x / len });
+  }
+
+  let nearestVertex = null, nearestDist = Infinity;
+  for (const v of verts) {
+    const dist = Math.hypot(v.x - circle.x, v.y - circle.y);
+    if (dist < nearestDist) {
+      nearestDist = dist;
+      nearestVertex = v;
+    }
+  }
+  if (nearestDist > 0) {
+    axes.push({ x: (circle.x - nearestVertex.x) / nearestDist, y: (circle.y - nearestVertex.y) / nearestDist });
+  }
+
+  for (const axis of axes) {
+    const [minP, maxP] = projectPolygon(verts, axis);
+    const c = circle.x * axis.x + circle.y * axis.y;
+    const overlap = Math.min(maxP, c + circle.radius) - Math.max(minP, c - circle.radius);
+
+    if (overlap <= 0) return null; // found a separating axis — no collision
+
+    if (overlap < minOverlap) {
+      minOverlap = overlap;
+      minAxis = axis;
+    }
+  }
+
+  const polyCenter = polygonCenter(verts);
+  const pointsTowardCircle = (circle.x - polyCenter.x) * minAxis.x + (circle.y - polyCenter.y) * minAxis.y;
+  if (pointsTowardCircle < 0) {
+    minAxis = { x: -minAxis.x, y: -minAxis.y };
+  }
+
+  return { x: minAxis.x * minOverlap, y: minAxis.y * minOverlap };
+}

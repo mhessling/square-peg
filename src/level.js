@@ -21,6 +21,9 @@ const level = {
       ],
       triangleDefs: [
         { x: 650, y: 350, radius: 24, angle: 0 }
+      ],
+      hexagonDefs: [
+        { x: 200, y: 350, radius: 28 }
       ]
     },
     {
@@ -39,6 +42,9 @@ const level = {
       ],
       triangleDefs: [
         { x: 600, y: 225, radius: 24, angle: 0 }
+      ],
+      hexagonDefs: [
+        { x: 250, y: 150, radius: 28 }
       ]
     }
   ],
@@ -132,6 +138,7 @@ const level = {
     player.y = this.current.playerStart.y;
     resetCircles(this.current.circleDefs);
     resetTriangles(this.current.triangleDefs);
+    resetHexagons(this.current.hexagonDefs);
     return true;
   }
 };

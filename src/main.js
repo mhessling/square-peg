@@ -10,10 +10,12 @@ function loop() {
   updateTriangles(player);
   resolvePlayerCollisions(player);
   resolvePlayerTriangleCollisions(player);
+  resolveHexagonCollisions(player, circles, triangles);
 
   if (level.isAtDoor(player)) level.advance();
 
   level.draw(ctx);
+  drawHexagons(ctx);
   drawCircles(ctx);
   drawTriangles(ctx);
   player.draw(ctx);
