@@ -18,6 +18,9 @@ const level = {
       circleDefs: [
         { x: 300, y: 200, radius: 20, speed: 3, fleeRange: 150 },
         { x: 550, y: 300, radius: 20, speed: 3, fleeRange: 150 }
+      ],
+      triangleDefs: [
+        { x: 650, y: 350, radius: 24, angle: 0 }
       ]
     },
     {
@@ -33,6 +36,9 @@ const level = {
       playerStart: { x: 60, y: 60 },
       circleDefs: [
         { x: 400, y: 225, radius: 20, speed: 3, fleeRange: 150 }
+      ],
+      triangleDefs: [
+        { x: 600, y: 225, radius: 24, angle: 0 }
       ]
     }
   ],
@@ -95,6 +101,17 @@ const level = {
     }
   },
 
+  // Push a triangle back out of any wall it's overlapping (exact polygon collision).
+  resolveTriangleCollision(triangle) {
+    for (const wall of this.current.walls) {
+      const mtv = polygonMTV(triangleVertices(triangle), rectVertices(wall.x, wall.y, wall.w, wall.h));
+      if (mtv) {
+        triangle.x += mtv.x;
+        triangle.y += mtv.y;
+      }
+    }
+  },
+
   // True if the square is touching this room's door.
   isAtDoor(square) {
     const door = this.current.door;
@@ -114,6 +131,7 @@ const level = {
     player.x = this.current.playerStart.x;
     player.y = this.current.playerStart.y;
     resetCircles(this.current.circleDefs);
+    resetTriangles(this.current.triangleDefs);
     return true;
   }
 };

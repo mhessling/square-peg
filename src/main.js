@@ -7,12 +7,15 @@ function loop() {
 
   player.update();
   updateCircles(player);
+  updateTriangles(player);
   resolvePlayerCollisions(player);
+  resolvePlayerTriangleCollisions(player);
 
   if (level.isAtDoor(player)) level.advance();
 
   level.draw(ctx);
   drawCircles(ctx);
+  drawTriangles(ctx);
   player.draw(ctx);
 
   requestAnimationFrame(loop);
