@@ -2,8 +2,8 @@
 const FLINCH_DURATION = 20; // frames spent startled before a circle actually flees
 
 const circles = [
-  { x: 300, y: 360, radius: 20, speed: 3, fleeRange: 150, state: 'idle', flinchTimer: 0 },
-  { x: 550, y: 360, radius: 20, speed: 3, fleeRange: 150, state: 'idle', flinchTimer: 0 }
+  { x: 300, y: 200, radius: 20, speed: 3, fleeRange: 150, state: 'idle', flinchTimer: 0 },
+  { x: 550, y: 300, radius: 20, speed: 3, fleeRange: 150, state: 'idle', flinchTimer: 0 }
 ];
 
 function updateCircles(player) {
@@ -19,25 +19,19 @@ function updateCircles(player) {
       } else if (circle.state === 'flinching') {
         circle.flinchTimer--;
         if (circle.flinchTimer <= 0) circle.state = 'fleeing';
-      } else if (circle.state === 'fleeing') {
-        // Roll away from the player, faster the closer they get.
-        const direction = dx > 0 ? 1 : -1;
-        circle.x += direction * circle.speed;
+      } else if (circle.state === 'fleeing' && distance > 0) {
+        // Roll directly away from the player.
+        circle.x += (dx / distance) * circle.speed;
+        circle.y += (dy / distance) * circle.speed;
       }
     } else {
       circle.state = 'idle';
     }
 
-    // Stay on the ground, same as the player.
-    circle.y = level.groundY - circle.radius;
+    level.resolveCircleCollision(circle);
   }
 
   resolveCircleCollisions();
-
-  for (const circle of circles) {
-    // Keep circles from rolling off the edges of the canvas.
-    circle.x = Math.max(circle.radius, Math.min(800 - circle.radius, circle.x));
-  }
 }
 
 // Circles shouldn't overlap each other — push overlapping pairs apart.
@@ -47,13 +41,17 @@ function resolveCircleCollisions() {
       const a = circles[i];
       const b = circles[j];
       const dx = b.x - a.x;
-      const overlap = a.radius + b.radius - Math.abs(dx);
+      const dy = b.y - a.y;
+      const distance = Math.hypot(dx, dy);
+      const overlap = a.radius + b.radius - distance;
 
-      if (overlap > 0) {
-        const direction = dx >= 0 ? 1 : -1;
-        const push = overlap / 2;
-        a.x -= direction * push;
-        b.x += direction * push;
+      if (overlap > 0 && distance > 0) {
+        const pushX = (dx / distance) * (overlap / 2);
+        const pushY = (dy / distance) * (overlap / 2);
+        a.x -= pushX;
+        a.y -= pushY;
+        b.x += pushX;
+        b.y += pushY;
       }
     }
   }
@@ -73,20 +71,13 @@ function resolvePlayerCollisions(player) {
     if (overlapX <= 0 || overlapY <= 0) continue;
 
     if (overlapX < overlapY) {
-      // Push out sideways.
       if (player.x + player.size / 2 < circle.x) player.x -= overlapX;
       else player.x += overlapX;
       player.vx = 0;
     } else {
-      // Push out vertically.
-      if (player.y + player.size / 2 < circle.y) {
-        player.y -= overlapY;
-        player.vy = 0;
-        player.onGround = true;
-      } else {
-        player.y += overlapY;
-        player.vy = 0;
-      }
+      if (player.y + player.size / 2 < circle.y) player.y -= overlapY;
+      else player.y += overlapY;
+      player.vy = 0;
     }
   }
 }

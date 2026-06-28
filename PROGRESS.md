@@ -1,13 +1,14 @@
 # Progress
 
 ## Where things stand
-- Pivoted from a platformer to a **puzzle game**: the square moves around a map and solves puzzles by pushing/interacting with other shapes, using the movement/collision mechanics already built.
-- Square moves and jumps (jump may become less relevant now that it's not a platformer — revisit later).
-- Circles flinch then flee when the square approaches.
-- Square collides solidly with circles (no pass-through) — this is the basis for "pushing" them around in puzzles.
-- Level is currently just a flat floor (`src/level.js`) with no walls, bounds, or goal — a holdover from the platformer phase.
+- Puzzle game where the square moves around a map and solves puzzles by pushing/interacting with other shapes.
+- Movement is now top-down/4-directional (`src/player.js`) — gravity and jumping are gone, since this isn't a platformer anymore.
+- Map (`src/level.js`) is a bounded room defined as a list of wall rectangles, with one interior wall as a basic obstacle. Player and circles both collide solidly with walls.
+- Circles flinch then flee when the square approaches, now fleeing in any direction (not just sideways) and bouncing off walls/each other realistically.
+- Square collides solidly with circles (no pass-through) — this is the basis for "pushing" them around in puzzles, though actual pushing (circle gets shoved, not just blocked) isn't implemented yet.
 
 ## Next up
-- Build a basic map: walls/bounds for a puzzle space (not just an infinite flat floor), and a way to define map layout data (e.g. a simple grid or list of obstacles) separate from rendering.
-- Decide what a "solved" puzzle looks like (e.g. get a circle to a target spot) — needed before maps mean anything.
-- Revisit whether jumping still belongs in a puzzle game, or whether movement should become pure top-down/4-directional.
+- Implement actual "pushing": right now the player is blocked by circles but doesn't move them — pushing puzzles need the circle to get shoved when the player walks into it.
+- Decide what a "solved" puzzle looks like (e.g. get a circle to a target spot) — needed before maps mean anything as puzzles.
+- Define more than one map/level, and a way to switch between them.
+- Consider whether "flee" behavior still makes sense for a pushing puzzle, or whether some/all shapes should just sit still until pushed.

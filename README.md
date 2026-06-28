@@ -8,5 +8,4 @@ Open `index.html` in a browser. No build step, no install.
 
 ## Controls
 
-- Move: Arrow keys or A/D
-- Jump: Space, Up, or W
+- Move: Arrow keys or WASD (4 directions — top-down, no jumping)
